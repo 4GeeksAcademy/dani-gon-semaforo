@@ -2,24 +2,43 @@ import { useState } from 'react';
 import './index.css';
 
 function Semaforo() {
-  const [color, setColor] = useState("rojo");
+  const [colores, setColores] = useState(['rojo', 'amarillo', 'verde']);
+  const [colorActivo, setColorActivo] = useState(null);
+  const [mostrarPurpura, setMostrarPurpura] = useState(false);
+  const [indice, setIndice] = useState(0);
 
-  const activarLuz = (nuevoColor) => {
-    setColor(nuevoColor);
+  const alternarColor = () => {
+    const nuevoIndice = (indice + 1) % colores.length;
+    setIndice(nuevoIndice);
+    setColorActivo(colores[nuevoIndice]);
+  };
+
+  const togglePurpura = () => {
+    const estaPurpura = colores.includes('purpura');
+    setColores(estaPurpura ? colores.filter(c => c !== 'purpura') : [...colores, 'purpura']);
+    if (estaPurpura && colorActivo === 'purpura') setColorActivo(null);
+    setMostrarPurpura(!estaPurpura);
   };
 
   return (
-    <div className="semaforo">
-
-      <div className={`luz rojo ${color === 'rojo' ? 'activo' : ''}`} onClick={() => activarLuz('rojo')}>
+    <div className="contenedor">
+      <div className="semaforo">
+        {colores.map(c => (
+          <div
+            key={c}
+            className={`luz ${c} ${colorActivo === c ? 'activo' : ''}`}
+            onClick={() => setColorActivo(c)}
+          ></div>
+        ))}
       </div>
 
-      <div className={`luz amarillo ${color === 'amarillo' ? 'activo' : ''}`} onClick={() => activarLuz('amarillo')}>
+      <div className="botonera">
+        < br />
+        <button onClick={alternarColor}>Crazy</button>
+        <button onClick={togglePurpura}>
+          {mostrarPurpura ? 'Hide' : 'Show'}
+        </button>
       </div>
-
-      <div className={`luz verde ${color === 'verde' ? 'activo' : ''}`} onClick={() => activarLuz('verde')}>
-      </div>
-    
     </div>
   );
 }
